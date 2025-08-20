@@ -1,0 +1,396 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="predict-page">
+  <h1 style="color: #5A6ACF;">Dự Đoán Tổn Thương Da</h2>
+    <div style="border-bottom: 1px solid #ccc;margin-top: 10px; margin-bottom: 10px;"></div>
+
+    <style>
+      :root {
+        --primary-color: #5A6ACF;
+        --secondary-color: #FFFFFF;
+        --secondary-color-dark: #F1F2F7;
+        --text-color: #333333;
+      }
+
+      .predict-page {
+        font-family: Arial, sans-serif;
+        color: var(--text-color);
+      }
+
+      .predict-wrap {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        margin-top: 18px;
+        flex-direction: column;
+        width: 95%;
+        margin: 0 auto;
+      }
+
+      .upload-section {
+        background: var(--secondary-color);
+        border-radius: 12px;
+        padding: 18px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        width: 100%;
+      }
+
+      .result-section {
+        background: var(--secondary-color);
+        border-radius: 12px;
+        padding: 18px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        width: 100%;
+      }
+
+      .upload-section h2,
+      .result-section h2 {
+        margin: 0 0 12px 0;
+        color: var(--primary-color);
+        font-size: 1.15rem;
+      }
+
+      /* Container cho layout 2 cột bên trong */
+      .upload-content {
+        display: flex;
+        gap: 20px;
+        flex-direction: column;
+        /* align-items: center; */
+      }
+
+      .image-section {
+        flex: 1;  
+        min-width: 280px;
+      }
+
+      .metadata-section {
+        flex: 1;
+        min-width: 280px;
+      }
+
+      .dropzone {
+        border: 2px dashed #cfcfcf;
+        border-radius: 10px;
+        padding: 26px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.18s, background-color 0.18s, box-shadow 0.18s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .dropzone:focus {
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(90, 106, 207, 0.08);
+      }
+
+      .dropzone.dragover {
+        border-color: var(--primary-color);
+        background: var(--secondary-color-dark);
+      }
+
+      .dropzone.hidden {
+        display: none !important;
+      }
+
+      .dropzone svg {
+        width: 44px;
+        height: 44px;
+        fill: var(--primary-color);
+        opacity: 0.95;
+      }
+
+      .dropzone .dz-text {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.3;
+      }
+
+      #fileInput {
+        display: none;
+      }
+
+      .preview {
+        display: none;
+        margin-top: 12px;
+        width: 100%;
+        max-height: 250px;
+        object-fit: contain;
+        border-radius: 10px;
+        border: 1px solid #eee;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        padding: 20px;
+      }
+
+      .metadata-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        margin-bottom: 4px;
+        font-weight: 500;
+        color: var(--text-color);
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+        justify-content: center;
+      }
+
+      .btn-predict {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .btn-predict:hover {
+        background: #4b57b3;
+      }
+
+      .btn-delete {
+        background: white;
+        color: var(--text-color);
+        border: 1px solid #d0d0d0;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .btn-delete:hover {
+        background: #f6f6f6;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 860px) {
+        .upload-content {
+          flex-direction: column;
+        }
+
+        .image-section,
+        .metadata-section {
+          flex: 1 1 100%;
+        }
+      }
+    </style>
+
+    <div class="predict-wrap">
+      <div class="upload-section">
+        <h2>Upload ảnh & Thông tin</h2>
+        <form id="uploadForm" method="POST" enctype="multipart/form-data" novalidate>
+          <div class="upload-content">
+            <!-- Left side: Image upload -->
+            <div class="image-section">
+              <label id="dropzone" class="dropzone" for="fileInput" tabindex="0"
+                aria-label="Nhấn để chọn file hoặc kéo thả ảnh vào đây">
+                <img src="{{ url_for('static', filename='upload.png') }}" alt="Upload icon" style="width:44px; height:44px; margin-bottom:8px;">
+                <div class="dz-text">Nhấn hoặc kéo thả ảnh vào đây<br><small>Hỗ trợ: .jpg .jpeg .png</small></div>
+                <input id="fileInput" name="file" type="file" accept="image/*">
+              </label>
+              <img id="preview" class="preview" src="#" alt="Preview ảnh">
+            </div>
+
+            <!-- Right side: Metadata -->
+            <div class="metadata-section">
+              <h3 style="margin: 0 0 12px 0; color: var(--primary-color); font-size: 1rem;">Thông tin bệnh nhân</h3>
+              <div class="metadata-form">
+                <div class="form-group">
+                  <label for="age">Tuổi:</label>
+                  <input type="number" id="age" name="age" min="0" max="120" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="sex">Giới tính:</label>
+                  <select id="sex" name="sex" required>
+                    <option value="">--Chọn--</option>
+                    <option value="male">Nam</option>
+                    <option value="female">Nữ</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="localization">Vị trí tổn thương:</label>
+                  <select id="localization" name="localization" required>
+                    <option value="">--Chọn--</option>
+                    <option value="scalp">Da đầu</option>
+                    <option value="ear">Tai</option>
+                    <option value="face">Mặt</option>
+                    <option value="back">Lưng</option>
+                    <option value="trunk">Thân</option>
+                    <option value="chest">Ngực</option>
+                    <option value="upper extremity">Tay trên</option>
+                    <option value="abdomen">Bụng</option>
+                    <option value="lower extremity">Chân dưới</option>
+                    <option value="genital">Bộ phận sinh dục</option>
+                    <option value="neck">Cổ</option>
+                    <option value="hand">Bàn tay</option>
+                    <option value="foot">Bàn chân</option>
+                    <option value="acral">Vùng đầu chi (acral)</option>
+                    <option value="unknown">Không xác định</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div id="actionButtons" class="button-row hidden" role="group" aria-label="Hành động">
+            <button id="submitBtn" type="submit" class="btn-predict">Dự đoán</button>
+            <button id="deleteBtn" type="button" class="btn-delete">Xoá</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="result-section" style="display: {% if prediction or predictions %}block{% else %}none{% endif %};">
+        <h2>Kết quả dự đoán</h2>
+        {% if prediction %}
+        <p style="margin-top:12px; font-weight:600;text-align: center;">Kết luận: {{ prediction }}</p>
+        {% endif %}
+
+        {% if predictions %}
+        <canvas id="probChart" style="margin-top:16px;"></canvas>
+        {% endif %}
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      (function () {
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const actionButtons = document.getElementById('actionButtons');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const uploadForm = document.getElementById('uploadForm');
+
+        function showFile(file) {
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            actionButtons.classList.remove('hidden');
+            dropzone.classList.add('hidden');
+          };
+          reader.readAsDataURL(file);
+        }
+
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+        dropzone.addEventListener('dragleave', () => { dropzone.classList.remove('dragover'); });
+        dropzone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('dragover');
+          const files = e.dataTransfer.files;
+          if (files && files.length) {
+            const file = files[0];
+            try { const dt = new DataTransfer(); dt.items.add(file); fileInput.files = dt.files; } catch (err) { }
+            showFile(file);
+          }
+        });
+
+        fileInput.addEventListener('change', () => {
+          if (fileInput.files && fileInput.files.length) { showFile(fileInput.files[0]); }
+          else { preview.style.display = 'none'; actionButtons.classList.add('hidden'); dropzone.classList.remove('hidden'); }
+        });
+
+        deleteBtn.addEventListener('click', () => {
+          try { fileInput.value = ''; } catch (err) { }
+          preview.src = '#';
+          preview.style.display = 'none';
+          actionButtons.classList.add('hidden');
+          dropzone.classList.remove('hidden');
+
+          // Ẩn kết quả cũ
+          const resultSection = document.querySelector('.result-section');
+          if (resultSection) {
+            resultSection.style.display = 'none';
+          }
+        });
+
+        uploadForm.addEventListener('submit', (e) => {
+          if (!fileInput.files || fileInput.files.length === 0) {
+            e.preventDefault(); alert('Vui lòng chọn ảnh trước khi nhấn Predict.');
+          }
+        });
+
+        dropzone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+
+        {% if uploaded_file %}
+        document.addEventListener('DOMContentLoaded', function () {
+          dropzone.classList.add('hidden');
+          preview.src = "{{ url_for('static', filename=uploaded_file) }}";
+          preview.style.display = 'block';
+          actionButtons.classList.remove('hidden');
+        });
+        {% endif %}
+
+        {% if predictions %}
+        document.addEventListener('DOMContentLoaded', function () {
+          const raw_predictions = {{ predictions | tojson }};
+
+          // Trích xuất labels và data từ mảng JSON
+          const labels = raw_predictions.map(p => p.class_vi);
+          const data = raw_predictions.map(p => p.probability);
+
+          const ctx = document.getElementById('probChart').getContext('2d');
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Xác suất',
+                data: data,
+                backgroundColor: 'rgba(90, 106, 207, 0.7)',
+                borderColor: 'rgba(90, 106, 207, 1)',
+                borderWidth: 1
+              }]
+            },
+            options: {
+              indexAxis: 'y',
+              scales: {
+                x: {
+                  beginAtZero: true,
+                  max: 1,
+                  ticks: {
+                    callback: function (val) { return (val * 100).toFixed(0) + '%'; }
+                  }
+                }
+              },
+              plugins: { legend: { display: false } }
+            }
+          });
+        });
+        {% endif %}
+      })();
+    </script>
+</div>
+{% endblock %}

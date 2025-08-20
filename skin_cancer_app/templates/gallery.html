@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 style="color: #5A6ACF;">Thư viện ảnh</h2>
+    <div style="border-bottom: 1px solid #ccc;margin-top: 10px; margin-bottom: 10px;"></div>
+
+    <style>
+        h2 {
+            color: #6b79d6;
+        }
+
+        .gallery-section {
+            margin: 0 auto;
+            margin-bottom: 40px;
+            margin-top: 20px;
+            width: 95%;
+            
+        }
+
+        .gallery-section h2 {
+            margin-bottom: 5px;
+        }
+
+        .gallery-section p.description {
+            margin-bottom: 15px;
+            font-style: italic;
+            color: #555;
+        }
+
+        .gallery-section:not(:last-child) {
+            border-bottom: 1px solid #ccc;
+            /* Màu xám nhẹ */
+            padding-bottom: 20px;
+            /* Tạo khoảng cách với đường kẻ */
+            margin-bottom: 40px;
+            /* Khoảng cách đến section tiếp theo */
+        }
+
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .image-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .image-grid img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+
+    {% set dx_descriptions = {
+    "bkl": "BKL (Benign keratosis-like lesions) – Tổn thương giống keratosis lành tính: các khối u da không phải ung
+    thư, thường gặp ở người lớn tuổi.",
+    "nv": "NV (Melanocytic nevi) – Nốt ruồi: thường lành tính nhưng cần theo dõi khi có thay đổi.",
+    "mel": "MEL (Melanoma) – Ung thư hắc tố: dạng ung thư da nghiêm trọng bắt nguồn từ các tế bào sản xuất sắc tố.",
+    "bcc": "BCC (Basal cell carcinoma) – Ung thư biểu mô tế bào đáy: loại ung thư da phổ biến, phát triển chậm và hiếm
+    khi di căn.",
+    "akiec": "AKIEC (Actinic keratoses and intraepithelial carcinoma) – Dày sừng ánh sáng và ung thư biểu mô tại chỗ:
+    tổn thương tiền ung thư do tác hại của ánh nắng.",
+    "vasc": "VASC (Vascular lesions) – Tổn thương mạch máu: bao gồm nhiều loại u lành tính liên quan đến mạch máu.",
+    "df": "DF (Dermatofibroma) – U xơ da: khối u da lành tính, thường xuất hiện ở tay hoặc chân."
+    } %}
+
+
+    {% for dx, images in gallery_dict.items() %}
+    <div class="gallery-section">
+        <h2>{{ dx|upper }}</h2>
+        {% if dx in dx_descriptions %}
+        <p class="description">{{ dx_descriptions[dx] }}</p>
+        {% endif %}
+        <div class="image-grid">
+            {% for img_path in images %}
+            <img src="{{ url_for('static', filename=img_path) }}" alt="{{ dx }}">
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    {% endblock %}

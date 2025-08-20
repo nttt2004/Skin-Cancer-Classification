@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 style="color: #5A6ACF;">Dashboard</h1> <div style="border-bottom: 1px solid #ccc;margin-top: 10px; margin-bottom: 10px;"></div>
+<style>
+    /* CSS cho trang dashboard */
+    .dashboard-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px; /* khoảng cách giữa các hàng chart */
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    /* Chart wrapper với background, padding, shadow */
+    .chart-box {
+        background: var(--secondary-color, #fff);
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    /* Canvas responsive */
+    .chart-box canvas {
+        display: block;
+        width: 100% !important;
+        height: 350px; /* hoặc 350px tùy chart */
+        margin-top: 12px;
+    }
+
+    /* Hàng 2 & 3 (2 chart) */
+    .chart-row.two-charts {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .chart-row.two-charts > .chart-box {
+        flex: 1 1 45%;
+    }
+
+    h2 {
+        color: #5A6ACF;
+        margin-bottom: 12px;
+        font-size: 1.15rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+        .chart-row.two-charts {
+            flex-direction: column;
+        }
+        .chart-row.two-charts > .chart-box {
+            flex: 1 1 100%;
+        }
+    }
+</style>
+
+<div class="container dashboard-container">
+    <!-- Hàng 1: Phân bố độ tuổi -->
+    <div class="chart-row single-chart">
+        <div class="chart-box">
+            <h2>Phân bố độ tuổi</h2>
+            <canvas id="ageChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Hàng 2 -->
+    <div class="chart-row two-charts">
+        <div class="chart-box">
+            <h2>Loại chẩn đoán</h2>
+            <canvas id="dxTypeChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <h2>Giới tính</h2>
+            <canvas id="sexChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Hàng 3: Số ca theo loại bệnh và vị trí cơ thể -->
+     <div class="chart-row single-chart">
+        <div class="chart-box">
+            <h2>Số ca theo loại bệnh</h2>
+            <canvas id="dxChart"></canvas>
+        </div>
+    </div>
+    <div class="chart-row single-chart">
+        <div class="chart-box">
+            <h2>Số ca theo vị trí cơ thể</h2>
+            <canvas id="locChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const boldFont = { weight: 'bold', size: 14 }; // dùng cho trục X và Y
+
+    // Biểu đồ 1: Số ca theo loại bệnh
+    new Chart(document.getElementById('dxChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ dx_labels | default([]) | tojson }},
+            datasets: [{ label: 'Số ca', data: {{ dx_values | default([]) | tojson }} }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { title: { display: true, text: 'Loại bệnh', font: boldFont } },
+                y: { title: { display: true, text: 'Số ca', font: boldFont } }
+            }
+        }
+    });
+
+    // Biểu đồ 2: Loại chẩn đoán
+    new Chart(document.getElementById('dxTypeChart'), {
+        type: 'pie',
+        data: {
+            labels: {{ dx_type_labels | default([]) | tojson }},
+            datasets: [{ data: {{ dx_type_values | default([]) | tojson }} }]
+        },
+        options: { responsive: true }
+    });
+
+    // Biểu đồ 3: Giới tính
+    new Chart(document.getElementById('sexChart'), {
+        type: 'pie',
+        data: {
+            labels: {{ sex_labels | default([]) | tojson }},
+            datasets: [{ data: {{ sex_values | default([]) | tojson }} }]
+        },
+        options: { responsive: true }
+    });
+
+    // Biểu đồ 4: Vị trí cơ thể
+    new Chart(document.getElementById('locChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ loc_labels | default([]) | tojson }},
+            datasets: [{ label: 'Số ca', data: {{ loc_values | default([]) | tojson }} }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { title: { display: true, text: 'Số ca', font: boldFont } },
+                y: { title: { display: true, text: 'Vị trí cơ thể', font: boldFont } }
+            }
+        }
+    });
+
+    // Biểu đồ 5: Phân bố độ tuổi
+    new Chart(document.getElementById('ageChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ age_labels | default([]) | tojson }},
+            datasets: [{ label: 'Số ca', data: {{ age_values | default([]) | tojson }} }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { title: { display: true, text: 'Nhóm tuổi', font: boldFont } },
+                y: { title: { display: true, text: 'Số ca', font: boldFont } }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

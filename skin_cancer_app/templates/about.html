@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Giới thiệu về Dataset HAM10000</h1>
+
+<p><strong>HAM10000</strong> (Human Against Machine with 10000 images) là tập dữ liệu lớn gồm các hình ảnh dermatoscopic của các tổn thương da có màu sắc khác nhau. Dataset này thường được sử dụng để huấn luyện các mô hình học máy nhằm phát hiện và phân loại ung thư da.</p>
+
+<h2>Tổng quan Dataset</h2>
+<table style="width:100%; border-collapse: collapse;">
+    <tr style="background-color: var(--primary-color); color: white;">
+        <th style="padding: 8px; border: 1px solid #ccc;">Thuộc tính</th>
+        <th style="padding: 8px; border: 1px solid #ccc;">Chi tiết</th>
+    </tr>
+    <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;">Tổng số hình ảnh</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">10,015 hình ảnh dermatoscopic</td>
+    </tr>
+    <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;">Kích thước ảnh</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">600x450 pixels (RGB)</td>
+    </tr>
+    <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;">Số loại tổn thương</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">7 loại tổn thương da</td>
+    </tr>
+    <tr>
+        <td style="padding: 8px; border: 1px solid #ccc;">Metadata</td>
+        <td style="padding: 8px; border: 1px solid #ccc;">Tuổi, Giới tính, Vị trí tổn thương, Chẩn đoán, Loại chẩn đoán</td>
+    </tr>
+</table>
+
+<h2>Các loại tổn thương da</h2>
+<ul>
+    <li><strong>AK</strong> – Actinic Keratoses (tiền ung thư)</li>
+    <li><strong>BCC</strong> – Ung thư biểu mô tế bào đáy</li>
+    <li><strong>BKL</strong> – Tổn thương lành tính dạng keratosis</li>
+    <li><strong>DF</strong> – Dermatofibroma</li>
+    <li><strong>NV</strong> – Nốt ruồi melanocytic</li>
+    <li><strong>MEL</strong> – Melanoma (ác tính)</li>
+    <li><strong>VASC</strong> – Tổn thương mạch máu</li>
+</ul>
+
+<h2>Chi tiết Dataset</h2>
+<p>Hình ảnh trong dataset được xác nhận bằng:</p>
+<ul>
+    <li>Giải phẫu bệnh (biopsy)</li>
+    <li>Theo dõi lâu dài</li>
+    <li>Đồng thuận từ chuyên gia</li>
+    <li>Quan sát bằng confocal in-vivo</li>
+</ul>
+<p>Dataset này là chuẩn mực nghiên cứu và đánh giá các mô hình học máy trong lĩnh vực da liễu.</p>
+
+<h2>Tải về & Tham khảo</h2>
+<p>Bạn có thể tải dataset từ:</p>
+<ul>
+    <li><a href="https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000" target="_blank">Kaggle - HAM10000</a></li>
+    <li><a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T" target="_blank">Harvard Dataverse - HAM10000</a></li>
+</ul>
+<p>Tham khảo bài báo:</p>
+<p>Tschandl, P., Rosendahl, C., & Kittler, H. (2018). The HAM10000 dataset, a large collection of multi-source dermatoscopic images of common pigmented skin lesions. <em>Scientific Data</em>, 5, 180161. <a href="https://doi.org/10.1038/sdata.2018.161" target="_blank">doi:10.1038/sdata.2018.161</a></p>
+
+{% endblock %}

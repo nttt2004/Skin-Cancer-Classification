@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title if title else "App" }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="sidebar">
+    <div class="logo">
+      <!-- <i class="fa-solid fa-circle"></i> -->
+      <span>GROUP 3 <br><span>Skin Lesions Detection</span></span>
+    </div>
+    <div style="border-bottom: 1px solid #ccc; margin-top: -10px; margin-bottom: 10px;"></div>
+    <div class="menu-label">MENU</div>
+    <ul>
+      <li>
+        <a href="{{ url_for('dashboard') }}" class="{% if request.path == '/' %}active{% endif %}">
+          <i class="fa-solid fa-chart-line"></i> Dashboard
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('gallery') }}" class="{% if request.path == '/gallery' %}active{% endif %}">
+          <i class="fa-solid fa-image"></i> Thư viện ảnh
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('predict') }}" class="{% if request.path == '/predict' %}active{% endif %}">
+          <i class="fa-solid fa-book"></i> Dự đoán
+        </a>
+      </li>
+      <!-- <li>
+        <a href="{{ url_for('about') }}" class="{% if request.path == '/about' %}active{% endif %}">
+          <i class="fa-solid fa-address-card"></i> About Us
+        </a>
+      </li> -->
+
+    </ul>
+  </div>
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+
+</html>
